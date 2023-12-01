@@ -1,0 +1,52 @@
+from datetime import datetime, timedelta
+from collections import defaultdict
+
+def get_birthdays_per_week(colleagues):
+    today = datetime.today().date()
+    birthdays_this_week = defaultdict(list)
+
+    for colleague in colleagues:
+        name = colleague['name']
+        birthday = colleague['birthday'].date()
+        birthdays_this_year = birthday.replace(year=today.year)
+
+        if birthdays_this_year < today:
+            birthdays_this_year = birthdays_this_year.replace(year=today.year + 1)
+
+        delta_days = (birthdays_this_year - today).days
+
+        if delta_days < 7:
+            next_birthday_day = (today + timedelta(days=delta_days)).strftime('%A')
+            if next_birthday_day == 'Saturday' or next_birthday_day == 'Sunday':
+                # Birthday falls on the weekend, greet on Monday
+                next_birthday_day = 'Monday'
+            birthdays_this_week[next_birthday_day].append(name)
+
+    current_day = today.strftime('%A')
+    for i in range(7):
+        day = (today + timedelta(days=i)).strftime('%A')
+        if day in birthdays_this_week:
+            print(f'{day}: {", ".join(birthdays_this_week[day])}')
+        elif day == current_day and current_day not in birthdays_this_week:
+            print(f'No birthdays this week.')
+        else:
+            print(f'{day}: No birthdays.')
+
+colleagues = [
+    {'name': 'Annika Buettelmann', 'birthday': datetime(1986,6,3)},
+    {'name': 'Kissy Cordts', 'birthday': datetime(1979,1,15)},
+    {'name': 'Sandra Cramer', 'birthday': datetime(1976,10,31)},
+    {'name': 'Mirja von Glahn', 'birthday': datetime(1976,10,8)},
+    {'name': 'Aike Mauer-Bochnik', 'birthday': datetime(1973,9,3)},
+    {'name': 'Tatjana Pfaffenrot', 'birthday': datetime(1983,6,30)},
+    {'name': 'Daniela Roennefahrt', 'birthday': datetime(1978,2,26)},
+    {'name': 'Ingrid Schmonsees', 'birthday': datetime(1959,11,24)},
+    {'name': 'Marina Scholl', 'birthday': datetime(1980,11, 6)},
+    
+]
+
+get_birthdays_per_week(colleagues)
+
+
+
+
